@@ -30,7 +30,7 @@ seed = args.seed
 
 # In[2]:
 
-data_dir = "/Users/mniel/Courses/Algorithms_in_Bioinf/ipython/data/"
+data_dir = "Data/"
 
 
 # ### Training Data
@@ -250,7 +250,7 @@ for e in range(0, epochs):
     eval_mse = cal_mse(evaluation_targets, eval_pred )
     eval_pcc = pearsonr(evaluation_targets, eval_pred)
     
-    print "# Epoch: ", e, "Gerr:", gerr, train_pcc[0], train_mse, eval_pcc[0], eval_mse 
+    print("# Epoch: ", e, "Gerr:", gerr, train_pcc[0], train_mse, eval_pcc[0], eval_mse)
 
 
 # ### Vector to Matrix

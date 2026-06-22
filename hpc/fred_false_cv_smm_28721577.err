@@ -1,0 +1,9 @@
+Loaded dependency [python3/3.10.13]: sqlite3/3.45.1
+Loaded dependency [python3/3.10.13]: gcc/12.3.0-binutils-2.40
+Loaded module: python3/3.10.13
+
+Loading python3/3.10.13
+  Loading requirement: sqlite3/3.45.1 gcc/12.3.0-binutils-2.40
+Alleles: 35 | grid: 30 HP settings (10 lambda x 3 epsilon, epochs=200) | jobs=4
+
+Wrote cv_fake_grid.csv and cv_summary.csv

@@ -105,7 +105,6 @@ def true_cv(folds, grid, seed):
 
     for t in range(n):                                   #outer / eval fold
         dev = [i for i in range(n) if i != t]            #4 development folds
-        cache = {}                                       #(hp_idx, v) -> weights
         best_idx, best_pcc = None, -np.inf
 
         for hi, (lamb, eps, epochs) in enumerate(grid):  #inner HP search
@@ -114,7 +113,6 @@ def true_cv(folds, grid, seed):
                 tr = [i for i in dev if i != v]          #3 training folds
                 Xtr, ytr = _cat(folds, tr)
                 w = smm.train_smm(Xtr, ytr, lamb, eps, epochs, seed)
-                cache[(hi, v)] = w
                 Xv, yv = folds[v]
                 vy.append(yv)
                 vp.append(smm.predict(Xv, w))
@@ -122,11 +120,18 @@ def true_cv(folds, grid, seed):
             if not np.isnan(p) and p > best_pcc:
                 best_pcc, best_idx = p, hi
 
-        #ensemble of the 4 inner models trained with HP* -> predict outer fold
+        if best_idx is None:
+            raise ValueError("All inner-CV hyperparameter scores were NaN")
+
+        # Retrain once on all 4 outer-training folds with the selected HP,
+        # then evaluate on the untouched outer fold.
+        lamb, eps, epochs = grid[best_idx]
+        Xdev, ydev = _cat(folds, dev)
+        w_final = smm.train_smm(Xdev, ydev, lamb, eps, epochs, seed)
+
         Xt, yt = folds[t]
-        ens = np.mean([smm.predict(Xt, cache[(best_idx, v)]) for v in dev], axis=0)
         outer_y.append(yt)
-        outer_pred.append(ens)
+        outer_pred.append(smm.predict(Xt, w_final))
         selected.append(grid[best_idx])
 
     yt = np.concatenate(outer_y)
